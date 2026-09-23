@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apex Institute of Technology & Science</title>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #064e3b;   /* Deep Forest Emerald Green */
+            --secondary-color: #047857; /* Emerald Accent */
+            --accent-color: #f59e0b;    /* Warm Amber Gold */
+            --light-bg: #f8fafc;        /* Crisp Light Background */
+            --card-bg: #ffffff;         /* Pure White Card Base */
+            --dark-text: #1e293b;       /* Dark Charcoal Text */
+            --light-text: #f8fafc;
+            --card-shadow: 0 10px 25px -5px rgba(6, 78, 59, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* --- Secret Admin Bar --- */
+        #admin-bar {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #dc2626;
+            color: white;
+            padding: 10px 20px;
+            z-index: 10000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        #admin-bar.active {
+            display: flex;
+        }
+        .admin-controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .admin-controls button {
+            background: white;
+            color: #dc2626;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: var(--transition);
+        }
+        .admin-controls button:hover {
+            background: #fee2e2;
+        }
+
+        /* --- Editable Outline in Admin Mode --- */
+        body.admin-mode [contenteditable="true"] {
+            outline: 2px dashed #f59e0b !important;
+            padding: 4px;
+            background: rgba(245, 158, 11, 0.1);
+            border-radius: 4px;
+        }
+
+        /* --- Navigation Bar --- */
+        header {
+            background-color: var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 12px 20px;
+        }
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            text-decoration: none;
+        }
+        .brand img {
+            height: 48px;
+            width: 48px;
+            object-fit: contain;
+            border-radius: 50%;
+            background: white;
+            padding: 2px;
+        }
+        .brand-text h1 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #fff;
+            line-height: 1.2;
+        }
+        .brand-text span {
+            font-size: 0.72rem;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            gap: 18px;
+            align-items: center;
+        }
+        .nav-link {
+            color: #ecfdf5;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.88rem;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            padding: 5px 0;
+            white-space: nowrap;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--accent-color);
+        }
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--accent-color);
+            border-radius: 2px;
+        }
+
+        /* --- Hamburger Menu (Mobile Responsive) --- */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            color: white;
+            font-size: 1.6rem;
+        }
+
+        @media (max-width: 1050px) {
+            .hamburger {
+                display: block;
+            }
+            .nav-menu {
+                position: fixed;
+                top: 72px;
+                left: -100%;
+                flex-direction: column;
+                background-color: var(--primary-color);
+                width: 100%;
+                max-height: calc(100vh - 72px);
+                overflow-y: auto;
+                text-align: center;
+                transition: 0.4s ease;
+                box-shadow: 0 10px 15px rgba(0,0,0,0.3);
+                padding: 20px 0;
+                gap: 15px;
+            }
+            .nav-menu.active {
+                left: 0;
+            }
+        }
+
+        /* --- Main Content Area --- */
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 30px 20px;
+            min-height: 70vh;
+        }
+
+        .page-section {
+            display: none;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Hero Banner --- */
+        .hero {
+            background: linear-gradient(rgba(6, 78, 59, 0.88), rgba(4, 120, 87, 0.85)), url('https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1200&q=80') center/cover;
+            color: white;
+            text-align: center;
+            padding: 80px 20px;
+            border-radius: 16px;
+            margin-bottom: 35px;
+            box-shadow: var(--card-shadow);
+        }
+        .hero h2 {
+            font-size: 2.3rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+        .hero p {
+            font-size: 1.05rem;
+            max-width: 750px;
+            margin: 0 auto 25px;
+            color: #d1fae5;
+        }
+        .cta-btn {
+            display: inline-block;
+            background-color: var(--accent-color);
+            color: #064e3b;
+            padding: 12px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.4);
+            cursor: pointer;
+        }
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            background-color: #d97706;
+            color: white;
+        }
+
+        /* --- Cards & Grid Layouts --- */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--card-bg);
+            padding: 22px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--secondary-color);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            transform: translateY(-4px);
+        }
+        .stat-card i {
+            font-size: 2rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+        }
+        .stat-card h3 {
+            font-size: 1.7rem;
+            color: var(--primary-color);
+        }
+
+        /* --- Sub Navigation Tabs --- */
+        .sub-nav {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .tab-btn {
+            padding: 10px 20px;
+            border: none;
+            background: #e2e8f0;
+            color: var(--dark-text);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        .tab-btn.active {
+            background: var(--secondary-color);
+            color: white;
+        }
+        .tab-content {
+            display: none;
+            background: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* --- Leader Profile Cards --- */
+        .profile-card {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+        }
+        .profile-card img {
+            width: 180px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: var(--card-shadow);
+            border: 3px solid var(--secondary-color);
+        }
+        .profile-info {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        /* --- Photo Gallery --- */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            height: 220px;
+            background: #cbd5e1;
+        }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+        .gallery-item:hover img {
+            transform: scale(1.08);
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(6, 78, 59, 0.95));
+            color: white;
+            padding: 12px 15px;
+            font-size: 0.88rem;
+        }
+
+        /* --- Form Containers --- */
+        .form-card {
+            background: var(--card-bg);
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: var(--card-shadow);
+            max-width: 850px;
+            margin: 0 auto;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 11px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(4, 120, 87, 0.15);
+        }
+
+        /* --- Footer (3 Panels) --- */
+        footer {
+            background-color: var(--primary-color);
+            color: #a7f3d0;
+            padding: 50px 20px 20px;
+            margin-top: 60px;
+        }
+        .footer-grid {
+            max-width: 1250px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #065f46;
+        }
+        .footer-panel h3 {
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        .footer-panel h3::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent-color);
+        }
+        .footer-panel p, .footer-panel li {
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .footer-panel ul {
+            list-style: none;
+        }
+        .footer-panel a {
+            color: #ecfdf5;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        .footer-panel a:hover {
+            color: var(--accent-color);
+            padding-left: 4px;
+        }
+
+        .map-container {
+            width: 100%;
+            height: 180px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #065f46;
+        }
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            font-size: 0.85rem;
+            color: #6ee7b7;
+        }
+        .secret-trigger {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Modal Overlay */
+        .modal {
+            display: none;
+            position: fixed;
+            top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.65);
+            z-index: 20000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 340px;
+            text-align: center;
+        }
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .course-card {
+            background: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 5px solid var(--secondary-color);
+            box-shadow: var(--card-shadow);
+        }
+        .course-card h4 {
+            color: var(--secondary-color);
+            font-size: 1.15rem;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Hidden Admin Control Bar -->
+    <div id="admin-bar">
+        <span><i class="fa-solid fa-user-gear"></i> <strong>ADMIN MODE ACTIVE</strong> — Edit text directly or update media.</span>
+        <div class="admin-controls">
+            <button onclick="changeLogo()"><i class="fa-solid fa-image"></i> Logo</button>
+            <button onclick="changePrincipalPhoto()"><i class="fa-solid fa-camera"></i> Principal Photo</button>
+            <button onclick="changeDirectorPhoto()"><i class="fa-solid fa-camera"></i> Director Photo</button>
+            <button onclick="addGalleryPhoto()"><i class="fa-solid fa-plus"></i> Add Photo</button>
+            <button onclick="saveAdminChanges()"><i class="fa-solid fa-floppy-disk"></i> Save Edits</button>
+            <button onclick="exitAdminMode()"><i class="fa-solid fa-xmark"></i> Exit Admin</button>
+        </div>
+    </div>
+
+    <!-- Navigation Header -->
+    <header>
+        <nav class="navbar">
+            <a href="#" class="brand">
+                <img id="college-logo" src="logo.png" alt="College Logo">
+                <div class="brand-text">
+                    <h1 id="college-title">APEX INSTITUTE</h1>
+                    <span>TECHNOLOGY & SCIENCE</span>
+                </div>
+            </a>
+            
+            <div class="hamburger" id="hamburger-menu">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+
+            <!-- 8 Navigation Menu Items -->
+            <ul class="nav-menu" id="nav-menu">
+                <li><a class="nav-link active" onclick="switchPage('home')"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a class="nav-link" onclick="switchPage('about')"><i class="fa-solid fa-circle-info"></i> About Us</a></li>
+                <li><a class="nav-link" onclick="switchPage('courses')"><i class="fa-solid fa-book"></i> Courses</a></li>
+                <li><a class="nav-link" onclick="switchPage('academics')"><i class="fa-solid fa-graduation-cap"></i> Academics</a></li>
+                <li><a class="nav-link" onclick="switchPage('gallery')"><i class="fa-solid fa-images"></i> Photo Gallery</a></li>
+                <li><a class="nav-link" onclick="switchPage('admissions')"><i class="fa-solid fa-user-plus"></i> Admissions</a></li>
+                <li><a class="nav-link" onclick="switchPage('enquiry')"><i class="fa-solid fa-circle-question"></i> Enquiry</a></li>
+                <li><a class="nav-link" onclick="switchPage('contact')"><i class="fa-solid fa-headset"></i> Contact Us</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+
+        <!-- 1. HOME PAGE -->
+        <section id="page-home" class="page-section active">
+            <div class="hero">
+                <h2 class="editable" id="hero-title">Welcome to Apex Institute of Technology & Science</h2>
+                <p class="editable" id="hero-subtitle">Empowering future innovators through academic excellence, cutting-edge labs, and world-class placement opportunities.</p>
+                <a class="cta-btn" onclick="switchPage('admissions')"><i class="fa-solid fa-paper-plane"></i> Apply for Admission 2026-27</a>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <h3>18,000+</h3>
+                    <p>Global Alumni</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <h3>300+</h3>
+                    <p>Expert Faculty</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-award"></i>
+                    <h3>NAAC A+</h3>
+                    <p>Accredited Grade</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <h3>96.4%</h3>
+                    <p>Placement Rate</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ABOUT US PAGE -->
+        <section id="page-about" class="page-section">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);"><i class="fa-solid fa-building-columns"></i> About Our Institution</h2>
+            
+            <div class="sub-nav">
+                <button class="tab-btn active" onclick="switchTab('about', 'tab-mission')">Mission & Vision</button>
+                <button class="tab-btn" onclick="switchTab('about', 'tab-principal')">Principal's Message</button>
+                <button class="tab-btn" onclick="switchTab('about', 'tab-director')">Director's Message</button>
+            </div>
+
+            <div id="tab-mission" class="tab-content about-tab active">
+                <h3 style="color: var(--secondary-color); margin-bottom: 10px;">Our Mission</h3>
+                <p class="editable" id="text-mission" style="margin-bottom: 25px;">
+                    To deliver high-quality, practical technology and science education. We empower students with technical competence, moral integrity, leadership capabilities, and lifelong learning attitudes.
+                </p>
+                <h3 style="color: var(--secondary-color); margin-bottom: 10px;">Our Vision</h3>
+                <p class="editable" id="text-vision">
+                    To be a world-renowned premier center for technical education and scientific research, fostering global leaders and entrepreneurs capable of driving societal transformation.
+                </p>
+            </div>
+
+            <div id="tab-principal" class="tab-content about-tab">
+                <div class="profile-card">
+                    <img id="principal-img" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80" alt="Principal">
+                    <div class="profile-info">
+                        <h3 style="color: var(--primary-color);">Dr. Aris Thorne</h3>
+                        <p style="color: var(--accent-color); font-weight: 600; margin-bottom: 12px;">Principal, Apex Institute</p>
+                        <p class="editable" id="text-principal-msg">
+                            "Welcome to Apex Institute! Our curriculum blends theoretical rigor with hands-on industrial practice. We nurture curiosity and innovation so our students emerge as confident technological pioneers."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-director" class="tab-content about-tab">
+                <div class="profile-card">
+                    <img id="director-img" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80" alt="Director">
+                    <div class="profile-info">
+                        <h3 style="color: var(--primary-color);">Prof. Robert Vance</h3>
+                        <p style="color: var(--accent-color); font-weight: 600; margin-bottom: 12px;">Managing Director</p>
+                        <p class="editable" id="text-director-msg">
+                            "Our mission is to bridge academia and industry seamlessly. We continuously invest in state-of-the-art laboratories, research grants, and global academic partnerships to empower our students."
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. COURSES PAGE (B.Tech & Diploma) -->
+        <section id="page-courses" class="page-section">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);"><i class="fa-solid fa-book-open"></i> Offered Programs & Courses</h2>
+            
+            <div class="sub-nav">
+                <button class="tab-btn active" onclick="switchTab('courses', 'tab-btech')"><i class="fa-solid fa-laptop-code"></i> B.Tech Programs</button>
+                <button class="tab-btn" onclick="switchTab('courses', 'tab-diploma')"><i class="fa-solid fa-gears"></i> Diploma Programs</button>
+            </div>
+
+            <div id="tab-btech" class="tab-content courses-tab active">
+                <div class="course-card">
+                    <h4>B.Tech in Computer Science & Engineering (CSE)</h4>
+                    <p class="editable" id="course-btech-cse">Duration: 4 Years | Focus: AI, Machine Learning, Full-Stack Software Development, Cloud Computing, and Cybersecurity.</p>
+                </div>
+                <div class="course-card">
+                    <h4>B.Tech in Artificial Intelligence & Data Science (AI & DS)</h4>
+                    <p class="editable" id="course-btech-aids">Duration: 4 Years | Focus: Neural Networks, Deep Learning, Big Data Analytics, Big Data Systems, and Robotics.</p>
+                </div>
+                <div class="course-card">
+                    <h4>B.Tech in Electronics & Communication Engineering (ECE)</h4>
+                    <p class="editable" id="course-btech-ece">Duration: 4 Years | Focus: VLSI Design, Embedded Systems, IoT, Wireless Communications, and Signal Processing.</p>
+                </div>
+            </div>
+
+            <div id="tab-diploma" class="tab-content courses-tab">
+                <div class="course-card">
+                    <h4>Diploma in Mechanical Engineering</h4>
+                    <p class="editable" id="course-dip-mech">Duration: 3 Years | Focus: Thermal Engineering, CAD/CAM Manufacturing, Automobile Technology, and Hydraulics.</p>
+                </div>
+                <div class="course-card">
+                    <h4>Diploma in Electrical Engineering</h4>
+                    <p class="editable" id="course-dip-ee">Duration: 3 Years | Focus: Electrical Machines, Power Electronics, Smart Grid Systems, and Renewable Energy.</p>
+                </div>
+                <div class="course-card">
+                    <h4>Diploma in Civil Engineering</h4>
+                    <p class="editable" id="course-dip-civil">Duration: 3 Years | Focus: Structural Design, Surveying, Environmental Engineering, and Construction Management.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. ACADEMICS PAGE -->
+        <section id="page-academics" class="page-section">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);"><i class="fa-solid fa-graduation-cap"></i> Academic Framework & Excellence</h2>
+            <div style="background: white; padding: 30px; border-radius: 12px; box-shadow: var(--card-shadow);">
+                <h3 style="color: var(--secondary-color); margin-bottom: 10px;">Academic Curriculum & System</h3>
+                <p class="editable" id="text-academic-body" style="margin-bottom: 20px;">
+                    Apex Institute follows an outcome-based choice-based credit system (CBCS) aligned with national AICTE & UGC standards. Semester evaluations include internal assessments, practical laboratory exams, industry internships, and capstone research projects.
+                </p>
+                <div class="stats-grid" style="margin-bottom: 0;">
+                    <div class="stat-card">
+                        <i class="fa-solid fa-microscope"></i>
+                        <h4>24/7 Research Labs</h4>
+                        <p>Fully equipped AI & Innovation labs</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-calendar-days"></i>
+                        <h4>Semester System</h4>
+                        <p>2 Semesters per Academic Year</p>
+                    </div>
+                    <div class="stat-card">
+                        <i class="fa-solid fa-building-user"></i>
+                        <h4>Industry Internships</h4>
+                        <p>Mandatory 6-month industry training</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. PHOTO GALLERY PAGE -->
+        <section id="page-gallery" class="page-section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2 style="color: var(--primary-color);"><i class="fa-solid fa-camera-retro"></i> Campus Photo Gallery</h2>
+            </div>
+            <div class="gallery-grid" id="gallery-container">
+                <!-- Gallery photos rendered dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- 6. ADMISSIONS PAGE (Detailed Admission Form) -->
+        <section id="page-admissions" class="page-section">
+            <div class="form-card">
+                <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 8px;"><i class="fa-solid fa-file-signature"></i> Student Admission Application (2026-27)</h2>
+                <p style="text-align: center; color: #64748b; margin-bottom: 25px;">Please fill in the complete student details below to apply for admission.</p>
+
+                <form action="https://formspree.io/f/mvkgrozl" method="POST">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="adm-student-name">Student Full Name *</label>
+                            <input type="text" id="adm-student-name" name="Student_Name" placeholder="Enter student full name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-father-name">Father's Name *</label>
+                            <input type="text" id="adm-father-name" name="Father_Name" placeholder="Enter father's name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-mother-name">Mother's Name *</label>
+                            <input type="text" id="adm-mother-name" name="Mother_Name" placeholder="Enter mother's name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-email">Student Email *</label>
+                            <input type="email" id="adm-email" name="Email" placeholder="student@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-phone">Mobile Phone Number *</label>
+                            <input type="tel" id="adm-phone" name="Phone_Number" placeholder="+91 9876543210" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-course">Desired Course / Branch *</label>
+                            <select id="adm-course" name="Applied_Course" required>
+                                <option value="">-- Select Course --</option>
+                                <option value="B.Tech Computer Science">B.Tech - Computer Science & Engg</option>
+                                <option value="B.Tech AI & Data Science">B.Tech - AI & Data Science</option>
+                                <option value="B.Tech Electronics">B.Tech - Electronics & Comm</option>
+                                <option value="Diploma Mechanical">Diploma - Mechanical Engineering</option>
+                                <option value="Diploma Electrical">Diploma - Electrical Engineering</option>
+                                <option value="Diploma Civil">Diploma - Civil Engineering</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adm-marks">Previous Qualifying Score / % *</label>
+                            <input type="text" id="adm-marks" name="Qualifying_Marks" placeholder="e.g. 88% in 12th/10th" required>
+                        </div>
+                        <div class="form-group full-width">
+                            <label for="adm-address">Complete Postal Address *</label>
+                            <textarea id="adm-address" name="Postal_Address" rows="3" placeholder="Enter complete home address with pincode" required></textarea>
+                        </div>
+                    </div>
+                    <button type="submit" class="cta-btn" style="width: 100%; border: none; font-size: 1rem; margin-top: 10px;">Submit Admission Form via Formspree</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 7. ENQUIRY PAGE (Simple Enquiry Form) -->
+        <section id="page-enquiry" class="page-section">
+            <div class="form-card" style="max-width: 650px;">
+                <h2 style="text-align: center; color: var(--primary-color); margin-bottom: 8px;"><i class="fa-solid fa-circle-question"></i> General Enquiry Form</h2>
+                <p style="text-align: center; color: #64748b; margin-bottom: 25px;">Have questions about fees, hostels, or courses? Ask us below.</p>
+
+                <form action="https://formspree.io/f/mvkgrozl" method="POST">
+                    <div class="form-group">
+                        <label for="enq-name">Your Full Name *</label>
+                        <input type="text" id="enq-name" name="Full_Name" placeholder="Enter your name" required>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div class="form-group">
+                            <label for="enq-email">Email Address *</label>
+                            <input type="email" id="enq-email" name="Email" placeholder="yourname@gmail.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="enq-phone">Phone Number *</label>
+                            <input type="tel" id="enq-phone" name="Phone_Number" placeholder="+91 9876543210" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="enq-question">Your Question / Message *</label>
+                        <textarea id="enq-question" name="Question" rows="4" placeholder="Write your question or inquiry here..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="cta-btn" style="width: 100%; border: none; font-size: 1rem;">Send Enquiry via Formspree</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 8. CONTACT US PAGE -->
+        <section id="page-contact" class="page-section">
+            <h2 style="margin-bottom: 20px; color: var(--primary-color);"><i class="fa-solid fa-headset"></i> Contact Us</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <i class="fa-solid fa-phone" style="color: var(--accent-color);"></i>
+                    <h3>Call Us</h3>
+                    <p class="editable" id="cnt-phone-1">+91 (06856) 223344 / 223345</p>
+                    <p class="editable" id="cnt-phone-2">Toll-Free: 1800-123-4567</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-envelope" style="color: var(--accent-color);"></i>
+                    <h3>Email Us</h3>
+                    <p class="editable" id="cnt-email-1">admissions@apexinstitute.edu</p>
+                    <p class="editable" id="cnt-email-2">info@apexinstitute.edu</p>
+                </div>
+                <div class="stat-card">
+                    <i class="fa-solid fa-location-dot" style="color: var(--accent-color);"></i>
+                    <h3>Visit Campus</h3>
+                    <p class="editable" id="cnt-address">Apex Campus, Knowledge Corridor, Tech City - 765001</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Footer (3 Panels) -->
+    <footer>
+        <div class="footer-grid">
+            <!-- Left Panel: Address -->
+            <div class="footer-panel">
+                <h3>Contact & Address</h3>
+                <p><i class="fa-solid fa-location-dot" style="color: var(--accent-color);"></i> Apex Campus, Knowledge Corridor, Tech City - 765001</p>
+                <p><i class="fa-solid fa-phone" style="color: var(--accent-color);"></i> +91 (06856) 223344 / 223345</p>
+                <p><i class="fa-solid fa-envelope" style="color: var(--accent-color);"></i> admissions@apexinstitute.edu</p>
+                <p><i class="fa-solid fa-clock" style="color: var(--accent-color);"></i> Mon - Sat: 9:00 AM - 5:00 PM</p>
+            </div>
+
+            <!-- Mid Panel: Embedded Google Map -->
+            <div class="footer-panel">
+                <h3>Campus Location Map</h3>
+                <div class="map-container">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d118147.8105634625!2d83.338000!3d19.170000!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTksMTcwMDAnTiA4M8KwMjAnMDAnRQ!5e0!3m2!1sen!2sin!4v1650000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+            </div>
+
+            <!-- Right Panel: Links -->
+            <div class="footer-panel">
+                <h3>Quick Navigation</h3>
+                <ul>
+                    <li><a onclick="switchPage('home')"><i class="fa-solid fa-angle-right"></i> Home Page</a></li>
+                    <li><a onclick="switchPage('about')"><i class="fa-solid fa-angle-right"></i> About Us & Leadership</a></li>
+                    <li><a onclick="switchPage('courses')"><i class="fa-solid fa-angle-right"></i> B.Tech & Diploma Courses</a></li>
+                    <li><a onclick="switchPage('academics')"><i class="fa-solid fa-angle-right"></i> Academic Framework</a></li>
+                    <li><a onclick="switchPage('gallery')"><i class="fa-solid fa-angle-right"></i> Photo Gallery</a></li>
+                    <li><a onclick="switchPage('admissions')"><i class="fa-solid fa-angle-right"></i> Online Admission Form</a></li>
+                    <li><a onclick="switchPage('enquiry')"><i class="fa-solid fa-angle-right"></i> Enquiry Form</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 Apex Institute of Technology & Science. All Rights Reserved. <span class="secret-trigger" onclick="promptAdminPassword()" title="Secret Admin Trigger">⚙️</span></p>
+        </div>
+    </footer>
+
+    <!-- Secret Password Modal -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content">
+            <h3 style="color: var(--primary-color);"><i class="fa-solid fa-lock"></i> Admin Authentication</h3>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 5px;">Enter admin password to activate live editor.</p>
+            <input type="password" id="adminPasswordInput" placeholder="Password (default: admin123)">
+            <button class="cta-btn" style="width: 100%; border:none;" onclick="verifyAdminPassword()">Login to Admin Mode</button>
+        </div>
+    </div>
+
+    <script>
+        // Default Photo Gallery Dataset
+        let galleryData = [
+            { src: "https://images.unsplash.com/photo-1541829070764-84a7d30dd3f3?auto=format&fit=crop&w=600&q=80", title: "Main Academic Building" },
+            { src: "https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=600&q=80", title: "Student Community Center" },
+            { src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=600&q=80", title: "Advanced Innovation Lab" },
+            { src: "https://images.unsplash.com/photo-1521587760476-6c12a4b040da?auto=format&fit=crop&w=600&q=80", title: "Central Digital Library" }
+        ];
+
+        // Render Gallery Photos
+        function renderGallery() {
+            const savedGallery = localStorage.getItem('college_gallery');
+            if (savedGallery) {
+                galleryData = JSON.parse(savedGallery);
+            }
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            galleryData.forEach(item => {
+                const galleryDiv = document.createElement('div');
+                galleryDiv.className = 'gallery-item';
+                galleryDiv.innerHTML = `
+                    <img src="${item.src}" alt="${item.title}">
+                    <div class="gallery-caption">${item.title}</div>
+                `;
+                container.appendChild(galleryDiv);
+            });
+        }
+
+        // Add Photo in Admin Mode
+        function addGalleryPhoto() {
+            const url = prompt("Enter Image URL:");
+            if (!url) return;
+            const caption = prompt("Enter Photo Caption/Title:", "Campus Photo");
+            galleryData.push({ src: url, title: caption || "Campus Photo" });
+            localStorage.setItem('college_gallery', JSON.stringify(galleryData));
+            renderGallery();
+            alert("New photo added to gallery!");
+        }
+
+        // Navigation Page Switcher
+        function switchPage(pageId) {
+            document.querySelectorAll('.page-section').forEach(sec => sec.classList.remove('active'));
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+
+            const target = document.getElementById('page-' + pageId);
+            if (target) target.classList.add('active');
+
+            const activeNav = Array.from(document.querySelectorAll('.nav-link')).find(el => el.getAttribute('onclick') && el.getAttribute('onclick').includes(pageId));
+            if(activeNav) activeNav.classList.add('active');
+
+            document.getElementById('nav-menu').classList.remove('active');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        // Tab Switcher for About and Courses
+        function switchTab(section, tabId) {
+            document.querySelectorAll(`.${section}-tab`).forEach(tab => tab.classList.remove('active'));
+            event.currentTarget.parentElement.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger-menu');
+        const navMenu = document.getElementById('nav-menu');
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+        });
+
+        // Secret Shortcut (Ctrl + Shift + A)
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.shiftKey && e.key === 'A') {
+                promptAdminPassword();
+            }
+        });
+
+        function promptAdminPassword() {
+            document.getElementById('adminModal').style.display = 'flex';
+            document.getElementById('adminPasswordInput').focus();
+        }
+
+        function verifyAdminPassword() {
+            const pwd = document.getElementById('adminPasswordInput').value;
+            if (pwd === 'admin123') {
+                document.getElementById('adminModal').style.display = 'none';
+                enableAdminMode();
+                alert('Success: Admin Mode unlocked!');
+            } else {
+                alert('Incorrect password! (Hint: admin123)');
+            }
+        }
+
+        function enableAdminMode() {
+            document.body.classList.add('admin-mode');
+            document.getElementById('admin-bar').classList.add('active');
+            
+            document.querySelectorAll('.editable').forEach(el => {
+                el.contentEditable = "true";
+            });
+        }
+
+        function exitAdminMode() {
+            document.body.classList.remove('admin-mode');
+            document.getElementById('admin-bar').classList.remove('active');
+            
+            document.querySelectorAll('.editable').forEach(el => {
+                el.contentEditable = "false";
+            });
+        }
+
+        function changeLogo() {
+            const newUrl = prompt("Enter new Logo Image URL:", document.getElementById('college-logo').src);
+            if (newUrl) {
+                document.getElementById('college-logo').src = newUrl;
+                localStorage.setItem('college_logo', newUrl);
+            }
+        }
+
+        function changePrincipalPhoto() {
+            const newUrl = prompt("Enter new Principal Photo URL:", document.getElementById('principal-img').src);
+            if (newUrl) {
+                document.getElementById('principal-img').src = newUrl;
+                localStorage.setItem('principal_img', newUrl);
+            }
+        }
+
+        function changeDirectorPhoto() {
+            const newUrl = prompt("Enter new Director Photo URL:", document.getElementById('director-img').src);
+            if (newUrl) {
+                document.getElementById('director-img').src = newUrl;
+                localStorage.setItem('director_img', newUrl);
+            }
+        }
+
+        function saveAdminChanges() {
+            document.querySelectorAll('.editable').forEach(el => {
+                localStorage.setItem(el.id, el.innerHTML);
+            });
+            alert('All website edits successfully saved!');
+        }
+
+        // Load Persisted Data on Startup
+        window.addEventListener('DOMContentLoaded', () => {
+            renderGallery();
+            
+            document.querySelectorAll('.editable').forEach(el => {
+                const saved = localStorage.getItem(el.id);
+                if (saved) el.innerHTML = saved;
+            });
+            if (localStorage.getItem('college_logo')) {
+                document.getElementById('college-logo').src = localStorage.getItem('college_logo');
+            }
+            if (localStorage.getItem('principal_img')) {
+                document.getElementById('principal-img').src = localStorage.getItem('principal_img');
+            }
+            if (localStorage.getItem('director_img')) {
+                document.getElementById('director-img').src = localStorage.getItem('director_img');
+            }
+        });
+    </script>
+</body>
+</html>
